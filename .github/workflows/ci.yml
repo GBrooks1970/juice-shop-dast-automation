@@ -77,7 +77,9 @@ jobs:
     needs: dast
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.dast.outputs.published == 'true'
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    # The first deploy onto a freshly (re)created Pages site can take several minutes to leave the
+    # backend build queue; give it generous headroom so a slow first deploy is not timeout-cancelled.
+    timeout-minutes: 30
     concurrency:
       group: pages
       cancel-in-progress: false
@@ -94,3 +96,5 @@ jobs:
       - name: Deploy labelled DAST report
         id: deployment
         uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5.0.0
+        with:
+          timeout: 1200000 # 20 min — match the generous job headroom for a slow first deploy
