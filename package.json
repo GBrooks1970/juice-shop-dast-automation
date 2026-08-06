@@ -1,0 +1,24 @@
+{
+  "name": "juice-shop-dast-automation",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "DAST lane: OWASP ZAP baseline scan against a pinned, locally-booted OWASP Juice Shop (an intentionally vulnerable training target), with positive-detection assertions.",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test:unit": "vitest run",
+    "verify": "npm run typecheck && npm run test:unit",
+    "scan": "node scripts/run-scan.mjs",
+    "scan:verdict": "tsx scripts/check-findings.ts",
+    "dast": "npm run scan && npm run scan:verdict"
+  },
+  "devDependencies": {
+    "@types/node": "^24.3.0",
+    "tsx": "^4.20.0",
+    "typescript": "^5.9.2",
+    "vitest": "^4.0.0"
+  }
+}
