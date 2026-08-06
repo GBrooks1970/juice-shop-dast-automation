@@ -64,12 +64,16 @@ Phase 0 produced two **implementation-precision amendments** (design note §2.1)
   before it demonstrably worked. `@cucumber/cucumber` pinned to ^13 to keep `npm audit` at 0 (v11
   pulled a moderate `uuid` transitive advisory; v13's `@cucumber/messages@34` drops it).
 
-### DAST-P4 — CI + published labelled report (D2.6a) — *outstanding*
-- [ ] Workflow: boot → scan → verdict → BDD → publish → teardown; PR-blocking.
-- [ ] `report.json` as CI artifact; labelled HTML report deployed to Pages on `main`.
-- [ ] Framing banner (design note §1) on the published page with both pinned versions.
-- [ ] **Requires the owner's explicit go-ahead to create the public GitHub remote.**
-- **Acceptance:** CI green on a PR; published report live and correctly labelled.
+### DAST-P4 — CI + published labelled report (D2.6a) — *in progress* (2026-08-06)
+- [x] Workflow `.github/workflows/ci.yml`: verify → scan → verdict → BDD → build-pages → deploy;
+      PR-blocking; SHA-pinned actions (house pins). Each Docker step boots + tears down.
+- [x] `reports/` (JSON + HTML) uploaded as the `zap-report` CI artifact.
+- [x] `scripts/build-pages.ts` renders a labelled index (framing banner, honest scope split, verdict,
+      detected classes) + copies the full ZAP report; `.nojekyll` added. Verified rendering in-browser.
+- [x] Framing banner (design note §1) enforced by `tests/build-pages.test.ts` (21 unit tests total).
+- [x] Owner go-ahead to create the public remote **given 2026-08-06**.
+- [ ] Public repo created, pushed, CI green, Pages live + correctly labelled. *(finishing)*
+- **Acceptance:** CI green on `main`; published report live and correctly labelled.
 
 ### DAST-P5 — Onboarding + close-out — *outstanding*
 - [ ] README (with framing), `onboard-project` registry row, landing-page evidence link.

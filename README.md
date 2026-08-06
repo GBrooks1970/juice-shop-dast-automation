@@ -15,8 +15,25 @@ vulnerability classes the target is known to contain, and publishing the scan re
 
 ## Status
 
-**In development.** Phase 0 (feasibility probe) and Phase 1 (design note) are complete; the scan lane
-itself is not yet implemented. See [docs/backlog.md](docs/backlog.md) for the phased plan.
+**Working.** The ZAP passive baseline scan, the positive-detection verdict, and three BDD
+exploit-confirmation scenarios all run against the pinned target in CI. See
+[docs/backlog.md](docs/backlog.md) for the phased plan and status.
+
+## Running it locally
+
+Requires Docker and Node 24.
+
+```bash
+npm ci
+npm run verify        # typecheck + unit tests (Docker-free, fast)
+npm run dast          # boot Juice Shop, run the ZAP baseline, apply the verdict
+npm run bdd           # boot Juice Shop, run the exploit-confirmation scenarios
+npm run pages:build   # build the labelled report site from the last scan
+```
+
+Each Docker-backed script boots the pinned container, runs, and tears it down. The pass/fail signal
+is `npm run scan:verdict` (which parses the report), **not** ZAP's exit code — that is always non-zero
+on this deliberately-vulnerable target.
 
 ## What it will demonstrate
 
