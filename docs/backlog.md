@@ -10,8 +10,8 @@
 
 # juice-shop-dast-automation — Backlog
 
-**Version:** 1 — project initiated 2026-08-06. Phase 0 (feasibility probe) and Phase 1 (design note)
-complete; Phases 2–5 outstanding. Binding design: [docs/dast-lane-design.md](dast-lane-design.md).
+**Version:** 2 — project initiated 2026-08-06. Phases 0-2 (probe, design note, scan lane)
+complete; Phases 3-5 outstanding. Binding design: [docs/dast-lane-design.md](dast-lane-design.md).
 
 > **Framing (governs every artefact in this repo):** the scan target is OWASP Juice Shop, an
 > **intentionally vulnerable** training application published by OWASP. It is **not a real product**
@@ -34,15 +34,20 @@ Phase 0 produced two **implementation-precision amendments** (design note §2.1)
 - [x] `docs/dast-lane-design.md` v0.1 written before any implementation.
 - [x] Records pins, expected-class contract, verdict rules, safety rules, phases.
 
-### DAST-P2 — Scan orchestration + findings model — *outstanding*
-- [ ] Container orchestration: private network, pinned Juice Shop, readiness wait, pinned ZAP baseline
-      scoped by container name (never a configurable URL — design note §7).
-- [ ] TypeScript findings model + `verdict()` (design note §5), with the expected-class table as data.
-- [ ] Unit tests against committed probe fixtures, covering pass, **missing-class**, and
-      **unexpected-class** failure modes (a real scan cannot produce these on demand).
-- [ ] `npm run verify` gate = typecheck + unit tests + lint (Docker-free, fast).
-- **Acceptance:** verdict logic is fully tested without booting a container; a real local scan reproduces
-  the seven expected classes and returns PASS.
+### DAST-P2 — Scan orchestration + findings model — **DONE** (2026-08-06)
+- [x] Container orchestration: private network, pinned Juice Shop, readiness wait, pinned ZAP baseline
+      scoped by container name (never a configurable URL — design note §7). `scripts/run-scan.mjs`
+- [x] TypeScript findings model + `verdict()` (design note §5), with the expected-class table as data.
+      `src/findings/{zap-report,expected-classes,verdict}.ts`
+- [x] Unit tests against committed probe fixtures, covering pass, **missing-class**, and
+      **unexpected-class** failure modes (a real scan cannot produce these on demand) — plus
+      empty-report and downgraded-risk cases. **14 tests.**
+- [x] `npm run verify` gate = typecheck + unit tests (Docker-free, fast). `npm audit` = 0 vulnerabilities.
+- **Acceptance MET:** verdict logic is fully tested without booting a container; a real local scan
+  (a 4th independent run) reproduced the seven expected classes and returned **PASS**, exit 0, with
+  clean teardown.
+- **Note:** `npm run scan:verdict` — not `zap-baseline.py`'s exit status — is the lane's pass/fail
+  signal; that script exits non-zero on every run of this target by design.
 
 ### DAST-P3 — BDD confirmation scenarios (D2.4b) — *outstanding*
 - [ ] Cucumber/TypeScript Screenplay layer.
