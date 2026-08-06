@@ -15,7 +15,8 @@
     "scan:verdict": "tsx scripts/check-findings.ts",
     "dast": "npm run scan && npm run scan:verdict",
     "bdd": "node scripts/run-bdd.mjs",
-    "bdd:dry": "node --import tsx/esm node_modules/@cucumber/cucumber/bin/cucumber.js --dry-run"
+    "bdd:dry": "node --import tsx/esm node_modules/@cucumber/cucumber/bin/cucumber.js --dry-run",
+    "pages:build": "tsx scripts/build-pages.ts"
   },
   "devDependencies": {
     "@cucumber/cucumber": "^13.2.1",
