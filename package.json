@@ -13,9 +13,12 @@
     "verify": "npm run typecheck && npm run test:unit",
     "scan": "node scripts/run-scan.mjs",
     "scan:verdict": "tsx scripts/check-findings.ts",
-    "dast": "npm run scan && npm run scan:verdict"
+    "dast": "npm run scan && npm run scan:verdict",
+    "bdd": "node scripts/run-bdd.mjs",
+    "bdd:dry": "node --import tsx/esm node_modules/@cucumber/cucumber/bin/cucumber.js --dry-run"
   },
   "devDependencies": {
+    "@cucumber/cucumber": "^13.2.1",
     "@types/node": "^24.3.0",
     "tsx": "^4.20.0",
     "typescript": "^5.9.2",

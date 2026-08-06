@@ -10,8 +10,8 @@
 
 # juice-shop-dast-automation — Backlog
 
-**Version:** 2 — project initiated 2026-08-06. Phases 0-2 (probe, design note, scan lane)
-complete; Phases 3-5 outstanding. Binding design: [docs/dast-lane-design.md](dast-lane-design.md).
+**Version:** 3 — project initiated 2026-08-06. Phases 0-3 (probe, design note, scan lane, BDD)
+complete; Phases 4-5 outstanding. Binding design: [docs/dast-lane-design.md](dast-lane-design.md).
 
 > **Framing (governs every artefact in this repo):** the scan target is OWASP Juice Shop, an
 > **intentionally vulnerable** training application published by OWASP. It is **not a real product**
@@ -49,16 +49,20 @@ Phase 0 produced two **implementation-precision amendments** (design note §2.1)
 - **Note:** `npm run scan:verdict` — not `zap-baseline.py`'s exit status — is the lane's pass/fail
   signal; that script exits non-zero on every run of this target by design.
 
-### DAST-P3 — BDD confirmation scenarios (D2.4b) — *outstanding*
-- [ ] Cucumber/TypeScript Screenplay layer.
-- [ ] Scenario 1 — sensitive file exposure via `/ftp/` (evidence-backed by the Phase 0 spider).
-- [ ] Scenario 2 — SQL-injection login bypass (**candidate; must be verified against the pinned image
-      before being claimed on any public surface**).
-- [ ] Scenario 3 — a third class (XSS or broken access control), selected during this phase.
-- [ ] Each scenario names in-code the documented vulnerability it exercises, and comments the deliberate
-      inverted polarity (the test asserts the exploit *succeeds*).
-- **Acceptance:** scenarios pass deterministically against the pinned container; no scenario is
-  described publicly before it demonstrably works.
+### DAST-P3 — BDD confirmation scenarios (D2.4b) — **DONE** (2026-08-06)
+- [x] Cucumber/TypeScript hand-rolled Screenplay layer (house idiom), `node --import tsx/esm`.
+- [x] Scenario 1 — sensitive file exposure: confidential `/ftp/acquisitions.md` (200) **and** the
+      poison-null-byte backup-filter bypass. **Both verified against the pinned image** before writing.
+- [x] Scenario 2 — SQL-injection login bypass: `' OR 1=1--` yields an admin JWT (`admin@juice-sh.op`).
+      **Verified** — the earlier "candidate" caveat is discharged.
+- [x] Scenario 3 — **broken access control (IDOR)**: one user's token reads another user's basket via
+      `/rest/basket/{id}`. Chosen over XSS (which reflected empty on this build). **Verified.**
+- [x] Each scenario names in-code the documented vulnerability + OWASP class, and comments the
+      deliberate inverted polarity (the test asserts the exploit *succeeds*).
+- **Acceptance MET:** 4 scenarios / 11 steps pass deterministically against the live pinned container
+  (`npm run bdd`, boots → runs → tears down, clean); dry-run binds all steps; nothing was described
+  before it demonstrably worked. `@cucumber/cucumber` pinned to ^13 to keep `npm audit` at 0 (v11
+  pulled a moderate `uuid` transitive advisory; v13's `@cucumber/messages@34` drops it).
 
 ### DAST-P4 — CI + published labelled report (D2.6a) — *outstanding*
 - [ ] Workflow: boot → scan → verdict → BDD → publish → teardown; PR-blocking.
