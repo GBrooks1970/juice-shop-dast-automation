@@ -10,8 +10,8 @@
 
 # juice-shop-dast-automation — Backlog
 
-**Version:** 3 — project initiated 2026-08-06. Phases 0-3 (probe, design note, scan lane, BDD)
-complete; Phases 4-5 outstanding. Binding design: [docs/dast-lane-design.md](dast-lane-design.md).
+**Version:** 4 — project initiated 2026-08-06. Phases 0-4 (probe, design, scan, BDD, CI+Pages)
+complete + live; Phase 5 (onboard/close) outstanding. Binding design: [docs/dast-lane-design.md](dast-lane-design.md).
 
 > **Framing (governs every artefact in this repo):** the scan target is OWASP Juice Shop, an
 > **intentionally vulnerable** training application published by OWASP. It is **not a real product**
@@ -64,16 +64,25 @@ Phase 0 produced two **implementation-precision amendments** (design note §2.1)
   before it demonstrably worked. `@cucumber/cucumber` pinned to ^13 to keep `npm audit` at 0 (v11
   pulled a moderate `uuid` transitive advisory; v13's `@cucumber/messages@34` drops it).
 
-### DAST-P4 — CI + published labelled report (D2.6a) — *in progress* (2026-08-06)
+### DAST-P4 — CI + published labelled report (D2.6a) — **DONE** (2026-08-06)
 - [x] Workflow `.github/workflows/ci.yml`: verify → scan → verdict → BDD → build-pages → deploy;
       PR-blocking; SHA-pinned actions (house pins). Each Docker step boots + tears down.
 - [x] `reports/` (JSON + HTML) uploaded as the `zap-report` CI artifact.
 - [x] `scripts/build-pages.ts` renders a labelled index (framing banner, honest scope split, verdict,
-      detected classes) + copies the full ZAP report; `.nojekyll` added. Verified rendering in-browser.
+      detected classes) + copies the full ZAP report. Verified rendering locally and live.
 - [x] Framing banner (design note §1) enforced by `tests/build-pages.test.ts` (21 unit tests total).
 - [x] Owner go-ahead to create the public remote **given 2026-08-06**.
-- [ ] Public repo created, pushed, CI green, Pages live + correctly labelled. *(finishing)*
-- **Acceptance:** CI green on `main`; published report live and correctly labelled.
+- [x] Public repo <https://github.com/GBrooks1970/juice-shop-dast-automation> created + pushed;
+      CI green on `main` (verify + scan + verdict + BDD all pass on hosted runners).
+- [x] **Pages LIVE + correctly labelled: <https://gbrooks1970.github.io/juice-shop-dast-automation/>**
+      (HTTP 200; framing banner, PASS verdict, 7 classes, both pinned versions; full ZAP report at
+      `/zap-report.html`).
+- **Acceptance MET.**
+- **Deploy note:** the first Pages deploy repeatedly stalled at `deployment_queued` then cancelled.
+  Root cause was a stuck backend Pages build (`483275fc`) plus, after a delete+recreate of the Pages
+  site, a slow first deploy exceeding the 10-min job timeout. Fix = cancel the stuck build via
+  `POST /repos/{r}/pages/deployments/{sha}/cancel`, recreate the Pages site, and raise the deploy job
+  timeout to 30 min (action to 20). Not a workflow-logic defect.
 
 ### DAST-P5 — Onboarding + close-out — *outstanding*
 - [ ] README (with framing), `onboard-project` registry row, landing-page evidence link.
