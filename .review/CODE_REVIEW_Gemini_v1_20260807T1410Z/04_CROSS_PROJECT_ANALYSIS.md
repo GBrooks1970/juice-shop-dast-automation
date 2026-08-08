@@ -1,8 +1,8 @@
 # Cross-Cutting Analysis
 
-[<- Back to Index](00_CODE_REVIEW_CLAUDE_v1_20260807T1410Z.md) | [Next: Recommendations ->](05_RECOMMENDATIONS.md)
+[<- Back to Index](00_CODE_REVIEW_Gemini_v1_20260807T1410Z.md) | [Next: Recommendations ->](05_RECOMMENDATIONS.md)
 
-**Reviewer:** AI assistant (Claude 3.7 Sonnet)
+**Reviewer:** AI assistant (Gemini)
 **Date:** 2026-08-07T14:10Z
 
 ---
@@ -76,7 +76,7 @@ Per template guidelines for single-repository reviews, this document analyzes cr
 
 ---
 
-[<- Back to Index](00_CODE_REVIEW_CLAUDE_v1_20260807T1410Z.md) | [Next: Recommendations ->](05_RECOMMENDATIONS.md)
+[<- Back to Index](00_CODE_REVIEW_Gemini_v1_20260807T1410Z.md) | [Next: Recommendations ->](05_RECOMMENDATIONS.md)
 ```
 
 ---
