@@ -1,8 +1,8 @@
 # Risks and Issues
 
-[<- Back to Index](00_CODE_REVIEW_CLAUDE_v1_20260807T1410Z.md) | [Next: Project Review ->](03_PROJECT_REVIEWS/PROJECT_001_juice-shop-dast-automation.md)
+[<- Back to Index](00_CODE_REVIEW_Gemini_v1_20260807T1410Z.md) | [Next: Project Review ->](03_PROJECT_REVIEWS/PROJECT_001_juice-shop-dast-automation.md)
 
-**Reviewer:** AI assistant (Claude 3.7 Sonnet)
+**Reviewer:** AI assistant (Gemini)
 **Date:** 2026-08-07T14:10Z
 
 ---
@@ -85,7 +85,7 @@
 
 ---
 
-[<- Back to Index](00_CODE_REVIEW_CLAUDE_v1_20260807T1410Z.md) | [Next: Project Review ->](03_PROJECT_REVIEWS/PROJECT_001_juice-shop-dast-automation.md)
+[<- Back to Index](00_CODE_REVIEW_Gemini_v1_20260807T1410Z.md) | [Next: Project Review ->](03_PROJECT_REVIEWS/PROJECT_001_juice-shop-dast-automation.md)
 ```
 
 ---

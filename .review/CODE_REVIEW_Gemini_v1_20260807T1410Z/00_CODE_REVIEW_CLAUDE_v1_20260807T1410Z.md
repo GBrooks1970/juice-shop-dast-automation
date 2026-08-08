@@ -1,6 +1,6 @@
 # Code Review Index: juice-shop-dast-automation
 
-**Reviewer:** AI assistant (Claude 3.7 Sonnet)
+**Reviewer:** AI assistant (Gemini)
 **Date:** 2026-08-07T14:10Z
 **Scope:** Full repository code review of juice-shop-dast-automation
 **Target System:** OWASP Juice Shop v20.1.1 (intentionally vulnerable target) & OWASP ZAP v2.17.0

@@ -1,8 +1,8 @@
 # Migration Strategy & Plans
 
-[<- Back to Index](00_CODE_REVIEW_CLAUDE_v1_20260807T1410Z.md)
+[<- Back to Index](00_CODE_REVIEW_Gemini_v1_20260807T1410Z.md)
 
-**Reviewer:** AI assistant (Claude 3.7 Sonnet)
+**Reviewer:** AI assistant (Gemini)
 **Date:** 2026-08-07T14:10Z
 
 ---
@@ -34,7 +34,7 @@
 
 ---
 
-[<- Back to Index](00_CODE_REVIEW_CLAUDE_v1_20260807T1410Z.md)
+[<- Back to Index](00_CODE_REVIEW_Gemini_v1_20260807T1410Z.md)
 ```
 
 ---
@@ -45,9 +45,9 @@ To fulfill the user prompt's workflow:
 1. Ensure working directory is clean in `juice-shop-dast-automation`.
 2. Fetch and checkout main: `git fetch origin && git checkout main && git pull --ff-only`.
 3. Create the review branch: `git checkout -b review/juice-shop-dast-automation-claude-v1`.
-4. Create directory `.review/CODE_REVIEW_CLAUDE_v1_20260807T1410Z/` and `03_PROJECT_REVIEWS/` subdirectory inside it.
+4. Create directory `.review/CODE_REVIEW_Gemini_v1_20260807T1410Z/` and `03_PROJECT_REVIEWS/` subdirectory inside it.
 5. Write the 8 markdown files with the contents provided above.
-6. Stage and commit: `git add .review/` and `git commit -m "docs(review): add code review CODE_REVIEW_CLAUDE_v1_20260807T1410Z"`.
+6. Stage and commit: `git add .review/` and `git commit -m "docs(review): add code review CODE_REVIEW_Gemini_v1_20260807T1410Z"`.
 7. Push branch and open PR via GitHub CLI (`gh pr create --title "docs(review): add code review for juice-shop-dast-automation (v1)" --body "..."`).
 8. Report the final block back to the user.
 

@@ -1,8 +1,8 @@
 # Project Review: juice-shop-dast-automation
 
-[<- Back to Index](../00_CODE_REVIEW_CLAUDE_v1_20260807T1410Z.md) | [Next: Cross-Project Analysis ->](../04_CROSS_PROJECT_ANALYSIS.md)
+[<- Back to Index](../00_CODE_REVIEW_Gemini_v1_20260807T1410Z.md) | [Next: Cross-Project Analysis ->](../04_CROSS_PROJECT_ANALYSIS.md)
 
-**Reviewer:** AI assistant (Claude 3.7 Sonnet)
+**Reviewer:** AI assistant (Gemini)
 **Date:** 2026-08-07T14:10Z
 **Target Repository:** `juice-shop-dast-automation`
 
@@ -66,7 +66,7 @@
 
 ---
 
-[<- Back to Index](../00_CODE_REVIEW_CLAUDE_v1_20260807T1410Z.md) | [Next: Cross-Project Analysis ->](../04_CROSS_PROJECT_ANALYSIS.md)
+[<- Back to Index](../00_CODE_REVIEW_Gemini_v1_20260807T1410Z.md) | [Next: Cross-Project Analysis ->](../04_CROSS_PROJECT_ANALYSIS.md)
 ```
 
 ---
