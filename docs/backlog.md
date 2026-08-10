@@ -10,8 +10,11 @@
 
 # juice-shop-dast-automation — Backlog
 
-**Version:** 4 — project initiated 2026-08-06. Phases 0-4 (probe, design, scan, BDD, CI+Pages)
-complete + live; Phase 5 (onboard/close) outstanding. Binding design: [docs/dast-lane-design.md](dast-lane-design.md).
+**Version:** 5 — project initiated 2026-08-06. **All phases DAST-P0…P5 complete + live**; the
+Phase 5 acceptance criteria were reconciled against their evidence on 2026-08-10 (README framing,
+registry row, live landing link, handover v1 — all already delivered, previously left unticked).
+Outstanding: the standing maintenance trigger DAST-M1 and the recorded risks R1/R2 only.
+Binding design: [docs/dast-lane-design.md](dast-lane-design.md).
 
 > **Framing (governs every artefact in this repo):** the scan target is OWASP Juice Shop, an
 > **intentionally vulnerable** training application published by OWASP. It is **not a real product**
@@ -84,9 +87,21 @@ Phase 0 produced two **implementation-precision amendments** (design note §2.1)
   `POST /repos/{r}/pages/deployments/{sha}/cancel`, recreate the Pages site, and raise the deploy job
   timeout to 30 min (action to 20). Not a workflow-logic defect.
 
-### DAST-P5 — Onboarding + close-out — *outstanding*
-- [ ] README (with framing), `onboard-project` registry row, landing-page evidence link.
-- [ ] Session-notes handover v1.
+### DAST-P5 — Onboarding + close-out — **DONE** (2026-08-06, verified 2026-08-10)
+- [x] README (with framing): `README.md` carries the mandatory "About the target" banner (design
+      note §1) alongside the honest passive/active scope split and the pinned-version table.
+- [x] `onboard-project` registry row: registered in `portfolio-prompts/registry.yml` as
+      `status: active`, `presentation_role: showcase`, `orchestration_target: true`, with the
+      Docker-free `npm run verify` recorded as the orchestration-safe gate.
+- [x] Landing-page evidence link: the live landing data
+      (<https://gbrooks1970.github.io/portfolio/data/presentation.json>) carries the
+      `OWASP Juice Shop DAST` entry with a `DAST scan report` action pointing at
+      <https://gbrooks1970.github.io/juice-shop-dast-automation/>.
+- [x] Session-notes handover v1: `juice-shop-dast-automation_session-notes_v1_20260806T1601Z.md`
+      (with its `.html` companion) in `session-notes/` at the portfolio root.
+- **Acceptance MET:** verified 2026-08-10 — the live landing entry resolves and the linked report
+  page returns HTTP 200. All five phases DAST-P0…P5 are complete; only the standing maintenance
+  trigger DAST-M1 and the recorded risks R1/R2 remain.
 
 ## Standing maintenance triggers
 
