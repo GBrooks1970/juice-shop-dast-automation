@@ -57,7 +57,7 @@ jobs:
         with:
           name: zap-report
           path: reports/
-          if-no-files-exist: error
+          if-no-files-found: error
 
       - name: Build labelled Pages site
         id: pages

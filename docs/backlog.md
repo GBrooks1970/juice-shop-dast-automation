@@ -10,11 +10,13 @@
 
 # juice-shop-dast-automation — Backlog
 
-**Version:** 5 — project initiated 2026-08-06. **All phases DAST-P0…P5 complete + live**; the
+**Version:** 6 — project initiated 2026-08-06. **All phases DAST-P0…P5 complete + live**; the
 Phase 5 acceptance criteria were reconciled against their evidence on 2026-08-10 (README framing,
 registry row, live landing link, handover v1 — all already delivered, previously left unticked).
-Outstanding: the standing maintenance trigger DAST-M1 and the recorded risks R1/R2 only.
-Binding design: [docs/dast-lane-design.md](dast-lane-design.md).
+Also 2026-08-10: fixed a silently-ignored CI input (`if-no-files-exist` → `if-no-files-found`, so
+the empty-report guard is actually in force) and recorded **DAST-M2** for the `upload-artifact`
+runtime deprecation. Outstanding: standing maintenance triggers DAST-M1/DAST-M2 and the recorded
+risks R1/R2 only. Binding design: [docs/dast-lane-design.md](dast-lane-design.md).
 
 > **Framing (governs every artefact in this repo):** the scan target is OWASP Juice Shop, an
 > **intentionally vulnerable** training application published by OWASP. It is **not a real product**
@@ -108,6 +110,13 @@ Phase 0 produced two **implementation-precision amendments** (design note §2.1)
 - **DAST-M1 — version-bump re-verification.** Any bump of the Juice Shop or ZAP pin **invalidates the
   expected-class contract** (design note §4). Re-run the Phase 0 probe, re-review the baseline, and
   re-verify the BDD scenarios before accepting the bump.
+- **DAST-M2 — `actions/upload-artifact` runtime deprecation.** Added 2026-08-10. CI annotates every
+  run: the pin `actions/upload-artifact@ea165f8` (v4.6.2) targets Node 20 and is force-run on Node
+  24. Warning only — not a failure — and the rest of the workflow is already on the v5/v6 lines.
+  Deferred deliberately: `upload-artifact` is at v7.x, so this is a multi-major jump whose release
+  notes must be reviewed (v4 introduced immutable artifacts) rather than a routine pin bump.
+  **Trigger:** the annotation becoming an error, or any other workflow change touching this step.
+  Mirrors the same trigger-gated treatment as parabank's PBR-02.
 
 ## Outstanding risks
 
