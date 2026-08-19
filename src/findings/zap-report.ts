@@ -10,16 +10,11 @@ export type RiskBand = (typeof RISK_BANDS)[number];
 /** Risk bands that participate in the pass/fail verdict (design note §4). */
 export const GATING_RISK_BANDS: readonly RiskBand[] = ['Low', 'Medium', 'High', 'Critical'];
 
-interface RawInstance {
-  uri?: string;
-}
-
 interface RawAlert {
   pluginid?: string;
   alert?: string;
   riskdesc?: string;
   count?: string | number;
-  instances?: RawInstance[];
 }
 
 interface RawSite {

@@ -6,21 +6,22 @@
 // there is no mechanism here capable of aiming a scan at any host we do not own. Do not add one.
 //
 // Juice Shop is an INTENTIONALLY VULNERABLE OWASP training target. Findings are expected.
-import { execFileSync, spawnSync } from 'node:child_process';
+import { spawnSync } from 'node:child_process';
 import { mkdirSync, existsSync, rmSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import process from 'node:process';
+import {
+  JUICE_SHOP_IMAGE,
+  ZAP_IMAGE,
+  docker,
+  stopAndRemoveContainer,
+  removeNetwork,
+  waitForReady,
+} from './docker-utils.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const REPORTS = resolve(ROOT, 'reports');
-
-// Pinned by digest — the expected-class contract in src/findings/expected-classes.ts is valid only
-// for this exact pair. Bumping either requires re-running the Phase 0 probe (backlog DAST-M1).
-const JUICE_SHOP_IMAGE =
-  'bkimminich/juice-shop@sha256:e68144772ebaaca0ec117b38d44903af92416793230288ef7c5437fc4f26850a';
-const ZAP_IMAGE =
-  'ghcr.io/zaproxy/zaproxy@sha256:8d387b1a63e3425beef4846e39719f5af2a787753af2d8b6558c6257d7a577a2';
 
 const NETWORK = 'juice-shop-dast';
 const CONTAINER = 'juice-shop-dast-target';
@@ -28,28 +29,10 @@ const TARGET_PORT = 3000;
 /** The one and only scan target. Not configurable — see the SAFETY note above. */
 const TARGET_URL = `http://${CONTAINER}:${TARGET_PORT}`;
 
-const docker = (args, opts = {}) => execFileSync('docker', args, { stdio: 'inherit', ...opts });
-const dockerQuiet = (args) => spawnSync('docker', args, { stdio: 'ignore' });
-
 function teardown() {
   console.log('dast: tearing down');
-  dockerQuiet(['rm', '-f', CONTAINER]);
-  dockerQuiet(['network', 'rm', NETWORK]);
-}
-
-/** Poll the published port until Juice Shop answers, so the spider never races an empty app. */
-async function waitForReady(timeoutMs = 180_000) {
-  const deadline = Date.now() + timeoutMs;
-  while (Date.now() < deadline) {
-    try {
-      const res = await fetch(`http://localhost:${TARGET_PORT}/`);
-      if (res.ok) return;
-    } catch {
-      // not up yet
-    }
-    await new Promise((r) => setTimeout(r, 3000));
-  }
-  throw new Error(`Juice Shop did not become ready within ${timeoutMs / 1000}s`);
+  stopAndRemoveContainer(CONTAINER);
+  removeNetwork(NETWORK);
 }
 
 teardown(); // clear anything a previous interrupted run left behind
@@ -68,7 +51,7 @@ try {
   ], { stdio: 'ignore' });
 
   console.log('dast: waiting for readiness');
-  await waitForReady();
+  await waitForReady(TARGET_PORT);
 
   console.log(`dast: running ZAP passive baseline against ${TARGET_URL}`);
   // The ZAP container runs as a non-root user and must write into the mounted reports dir, so run

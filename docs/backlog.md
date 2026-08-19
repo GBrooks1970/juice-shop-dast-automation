@@ -10,13 +10,8 @@
 
 # juice-shop-dast-automation — Backlog
 
-**Version:** 6 — project initiated 2026-08-06. **All phases DAST-P0…P5 complete + live**; the
-Phase 5 acceptance criteria were reconciled against their evidence on 2026-08-10 (README framing,
-registry row, live landing link, handover v1 — all already delivered, previously left unticked).
-Also 2026-08-10: fixed a silently-ignored CI input (`if-no-files-exist` → `if-no-files-found`, so
-the empty-report guard is actually in force) and recorded **DAST-M2** for the `upload-artifact`
-runtime deprecation. Outstanding: standing maintenance triggers DAST-M1/DAST-M2 and the recorded
-risks R1/R2 only. Binding design: [docs/dast-lane-design.md](dast-lane-design.md).
+**Version:** 7 — **Gemini v1 Code Review Remediation Completed** (2026-08-19).
+All review items JSA-R01…R04 and Phase 5 reconciliation closed: consolidated container utilities into `scripts/docker-utils.mjs`, enabled dynamic/configurable port allocation via `JUICE_SHOP_PORT`, introduced strongly typed Screenplay `MemoryKey` constant map, and pruned unused interfaces in `src/findings/zap-report.ts`. All phases DAST-P0…P5 complete + live. Binding design: [docs/dast-lane-design.md](dast-lane-design.md).
 
 > **Framing (governs every artefact in this repo):** the scan target is OWASP Juice Shop, an
 > **intentionally vulnerable** training application published by OWASP. It is **not a real product**
