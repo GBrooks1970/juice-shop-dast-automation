@@ -10,8 +10,13 @@
 
 # juice-shop-dast-automation — Backlog
 
-**Version:** 7 — **Gemini v1 Code Review Remediation Completed** (2026-08-19).
-All review items JSA-R01…R04 and Phase 5 reconciliation closed: consolidated container utilities into `scripts/docker-utils.mjs`, enabled dynamic/configurable port allocation via `JUICE_SHOP_PORT`, introduced strongly typed Screenplay `MemoryKey` constant map, and pruned unused interfaces in `src/findings/zap-report.ts`. All phases DAST-P0…P5 complete + live. Binding design: [docs/dast-lane-design.md](dast-lane-design.md).
+**Version:** 8 — **Lifecycle and backlog-count reconciliation completed** (2026-09-07).
+All delivery phases DAST-P0…P5 and review items JSA-R01…R04 are complete and live. The project is
+**resting with 0 outstanding backlog items**. R1/R2 are standing mitigations, while DAST-M1/M2 are
+dormant conditional triggers; none is open work unless its recorded trigger fires. Previous v7
+completed the Gemini v1 remediation by consolidating container utilities, enabling configurable port
+allocation, introducing strongly typed Screenplay memory keys, and pruning unused findings-model
+interfaces. Binding design: [docs/dast-lane-design.md](dast-lane-design.md).
 
 > **Framing (governs every artefact in this repo):** the scan target is OWASP Juice Shop, an
 > **intentionally vulnerable** training application published by OWASP. It is **not a real product**
@@ -87,9 +92,10 @@ Phase 0 produced two **implementation-precision amendments** (design note §2.1)
 ### DAST-P5 — Onboarding + close-out — **DONE** (2026-08-06, verified 2026-08-10)
 - [x] README (with framing): `README.md` carries the mandatory "About the target" banner (design
       note §1) alongside the honest passive/active scope split and the pinned-version table.
-- [x] `onboard-project` registry row: registered in `portfolio-prompts/registry.yml` as
-      `status: active`, `presentation_role: showcase`, `orchestration_target: true`, with the
-      Docker-free `npm run verify` recorded as the orchestration-safe gate.
+- [x] `onboard-project` registry row: registered in `portfolio-prompts/registry.yml` with
+      `presentation_role: showcase`, `orchestration_target: true`, and the Docker-free
+      `npm run verify` recorded as the orchestration-safe gate. The lifecycle status is now
+      reconciled to `resting` because the open backlog count is zero.
 - [x] Landing-page evidence link: the live landing data
       (<https://gbrooks1970.github.io/portfolio/data/presentation.json>) carries the
       `OWASP Juice Shop DAST` entry with a `DAST scan report` action pointing at
@@ -97,25 +103,48 @@ Phase 0 produced two **implementation-precision amendments** (design note §2.1)
 - [x] Session-notes handover v1: `juice-shop-dast-automation_session-notes_v1_20260806T1601Z.md`
       (with its `.html` companion) in `session-notes/` at the portfolio root.
 - **Acceptance MET:** verified 2026-08-10 — the live landing entry resolves and the linked report
-  page returns HTTP 200. All five phases DAST-P0…P5 are complete; only the standing maintenance
-  trigger DAST-M1 and the recorded risks R1/R2 remain.
+  page returns HTTP 200. All six phases DAST-P0…P5 are complete. Standing mitigations and dormant
+  maintenance triggers remain governed below but do not count as open work.
+
+## Current lifecycle and risk summary
+
+**Lifecycle status:** Resting — delivered and published; reopen only when a recorded trigger fires or
+new work is explicitly promoted.
+
+| Priority | Open count | Current state |
+|---|---:|---|
+| HIGH | 0 | No open items |
+| MEDIUM | 0 | No open items |
+| LOW | 0 | No open items |
+| **Total outstanding** | **0** | R1/R2 are mitigations; DAST-M1/M2 are dormant triggers |
 
 ## Standing maintenance triggers
 
+These triggers are persistent controls, not open backlog items. Promote the affected trigger to an
+open, scored item only when its condition fires.
+
 - **DAST-M1 — version-bump re-verification.** Any bump of the Juice Shop or ZAP pin **invalidates the
   expected-class contract** (design note §4). Re-run the Phase 0 probe, re-review the baseline, and
-  re-verify the BDD scenarios before accepting the bump.
+  re-verify the BDD scenarios before accepting the bump. **Status: dormant** — both image pins remain
+  unchanged from the Phase 0 baseline.
 - **DAST-M2 — `actions/upload-artifact` runtime deprecation.** Added 2026-08-10. CI annotates every
   run: the pin `actions/upload-artifact@ea165f8` (v4.6.2) targets Node 20 and is force-run on Node
   24. Warning only — not a failure — and the rest of the workflow is already on the v5/v6 lines.
   Deferred deliberately: `upload-artifact` is at v7.x, so this is a multi-major jump whose release
   notes must be reviewed (v4 introduced immutable artifacts) rather than a routine pin bump.
   **Trigger:** the annotation becoming an error, or any other workflow change touching this step.
-  Mirrors the same trigger-gated treatment as parabank's PBR-02.
+  **Status: dormant** — baseline `main` run `32266005705` (2026-08-19) completed successfully and
+  emitted the recorded warning; as at this reconciliation, no later repository change had touched
+  this workflow step. Mirrors the same trigger-gated treatment as parabank's PBR-02.
 
-## Outstanding risks
+## Standing controls and mitigations
+
+These controls remain mandatory but are not open work and therefore do not contribute to the H/M/L
+counts above.
 
 - **R1 — misreading of published findings.** Mitigated by the mandatory framing on every surface; this
-  is the project's top non-technical requirement and must be checked at every publish.
+  is the project's top non-technical requirement and must be checked at every publish. **Status:
+  mitigated by a persistent publication control.**
 - **R2 — BDD/vuln coupling.** Exploit scenarios are tied to specific Juice Shop vulnerabilities and can
-  break on a version bump — covered by DAST-M1.
+  break on a version bump — covered by DAST-M1. **Status: mitigated while the reviewed pins remain
+  unchanged.**
