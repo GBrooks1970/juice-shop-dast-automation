@@ -10,13 +10,15 @@
 
 # juice-shop-dast-automation — Backlog
 
-**Version:** 8 — **Lifecycle and backlog-count reconciliation completed** (2026-09-07).
-All delivery phases DAST-P0…P5 and review items JSA-R01…R04 are complete and live. The project is
-**resting with 0 outstanding backlog items**. R1/R2 are standing mitigations, while DAST-M1/M2 are
-dormant conditional triggers; none is open work unless its recorded trigger fires. Previous v7
-completed the Gemini v1 remediation by consolidating container utilities, enabling configurable port
-allocation, introducing strongly typed Screenplay memory keys, and pruning unused findings-model
-interfaces. Binding design: [docs/dast-lane-design.md](dast-lane-design.md).
+**Version:** 9 — **Lifecycle reconciliation reopened one maintenance item** (2026-09-07).
+All delivery phases DAST-P0…P5 and review items JSA-R01…R04 remain complete and live. Validation of
+the proposed resting transition exposed a nondeterministic PR-blocking DAST gate: the same PR merge
+ref failed its first scan and passed an unchanged rerun because crawl coverage differed. The project
+therefore remains **active with 1 outstanding MEDIUM item (DAST-M3)**. R1/R2 remain standing
+mitigations, while DAST-M1/M2 remain dormant conditional triggers. Previous v7 completed the Gemini
+v1 remediation by consolidating container utilities, enabling configurable port allocation,
+introducing strongly typed Screenplay memory keys, and pruning unused findings-model interfaces.
+Binding design: [docs/dast-lane-design.md](dast-lane-design.md).
 
 > **Framing (governs every artefact in this repo):** the scan target is OWASP Juice Shop, an
 > **intentionally vulnerable** training application published by OWASP. It is **not a real product**
@@ -94,8 +96,8 @@ Phase 0 produced two **implementation-precision amendments** (design note §2.1)
       note §1) alongside the honest passive/active scope split and the pinned-version table.
 - [x] `onboard-project` registry row: registered in `portfolio-prompts/registry.yml` with
       `presentation_role: showcase`, `orchestration_target: true`, and the Docker-free
-      `npm run verify` recorded as the orchestration-safe gate. The lifecycle status is now
-      reconciled to `resting` because the open backlog count is zero.
+      `npm run verify` recorded as the orchestration-safe gate. The lifecycle remains `active` while
+      DAST-M3 is open; transition to `resting` only after the canonical open count returns to zero.
 - [x] Landing-page evidence link: the live landing data
       (<https://gbrooks1970.github.io/portfolio/data/presentation.json>) carries the
       `OWASP Juice Shop DAST` entry with a `DAST scan report` action pointing at
@@ -104,19 +106,55 @@ Phase 0 produced two **implementation-precision amendments** (design note §2.1)
       (with its `.html` companion) in `session-notes/` at the portfolio root.
 - **Acceptance MET:** verified 2026-08-10 — the live landing entry resolves and the linked report
   page returns HTTP 200. All six phases DAST-P0…P5 are complete. Standing mitigations and dormant
-  maintenance triggers remain governed below but do not count as open work.
+  maintenance triggers remain governed below; the later DAST-M3 repeatability defect is separate
+  open maintenance work and does not reopen the delivered phases.
 
 ## Current lifecycle and risk summary
 
-**Lifecycle status:** Resting — delivered and published; reopen only when a recorded trigger fires or
-new work is explicitly promoted.
+**Lifecycle status:** Active — delivered and published, but not eligible for `resting` while the
+PR-blocking positive-detection gate can produce different verdicts for the same commit.
 
 | Priority | Open count | Current state |
 |---|---:|---|
 | HIGH | 0 | No open items |
-| MEDIUM | 0 | No open items |
+| MEDIUM | 1 | DAST-M3 |
 | LOW | 0 | No open items |
-| **Total outstanding** | **0** | R1/R2 are mitigations; DAST-M1/M2 are dormant triggers |
+| **Total outstanding** | **1** | DAST-M3 open; R1/R2 mitigated; DAST-M1/M2 dormant |
+
+## Outstanding items
+
+### DAST-M3 — Stabilise passive-baseline crawl coverage — **MEDIUM — OPEN 2026-09-07**
+
+**Problem.** The positive-detection contract is fail-closed as designed, but its inputs are not yet
+repeatable. On PR #6, workflow run
+[`34133748394`](https://github.com/GBrooks1970/juice-shop-dast-automation/actions/runs/34133748394)
+used the unchanged pinned Juice Shop 20.1.1 and ZAP 2.17.0 images on both attempts:
+
+- attempt 1 crawled 20 requests / 11 unique URLs, omitted `main.js` and two JavaScript chunks, and
+  failed after detecting only 3 of 7 gating classes; expected plugins 10063, 10110 and both 90004
+  alert names were missing;
+- the unchanged attempt 2 crawled 33 requests / 14 unique URLs, included `main.js` and additional
+  chunks, detected all 7 gating classes, and passed; all 4 BDD scenarios / 11 steps then passed.
+
+This proves crawl/resource-discovery nondeterminism despite identical application and scanner image
+digests. A retry can recover, but retrying is evidence of the defect rather than a remedy. Because
+the gate fails closed, this causes false-red PR checks rather than silently accepting a missed class;
+it still undermines the repository's documented deterministic-gate claim and can block unrelated
+changes.
+
+**Acceptance criteria.** Preserve the hard-coded local target, private Docker network, passive-only
+scope, and the positive-detection/new-class guards. Do not suppress expected classes merely to make
+the gate green. Instead:
+
+- [ ] identify and document the source of variable SPA JavaScript discovery;
+- [ ] make the resources needed by the reviewed class contract deterministic (for example, through
+      reviewed fixed seeds or an equivalently bounded passive crawl), without adding a configurable
+      external scan target or active scanning;
+- [ ] capture a fresh probe showing the same expected class set across at least three independent
+      fresh-container scans and update the contract provenance/design note with that evidence;
+- [ ] keep `npm run verify` green and prove all 4 BDD scenarios / 11 steps still pass;
+- [ ] obtain green required PR checks without relying on a manual rerun, then reconcile the lifecycle
+      to `resting` only if no other canonical backlog item is open.
 
 ## Standing maintenance triggers
 
