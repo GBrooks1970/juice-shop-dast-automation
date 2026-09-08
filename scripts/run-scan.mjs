@@ -55,8 +55,9 @@ try {
 
   console.log(`dast: running ZAP passive baseline against ${TARGET_URL}`);
   // The ZAP container runs as a non-root user and must write into the mounted reports dir, so run
-  // it as root here (the container is discarded immediately). Scope flags -m/-T bound the spider:
-  // the bound is what makes the crawl — and therefore the findings set — repeatable.
+  // it as root here (the container is discarded immediately). The traditional spider does not
+  // execute this Angular SPA, so -j adds ZAP's browser-backed Ajax spider. Both spiders remain
+  // time-bounded by -m and only feed the passive scanner; no active scan is introduced.
   //
   // NOTE: zap-baseline.py exits NON-ZERO whenever any WARN exists, which is ALWAYS true for this
   // deliberately-vulnerable target. Its exit code is therefore NOT the verdict and must not be
@@ -69,7 +70,7 @@ try {
       ZAP_IMAGE,
       'zap-baseline.py', '-t', TARGET_URL,
       '-J', 'report.json', '-r', 'report.html',
-      '-m', '2', '-T', '5',
+      '-j', '-m', '2', '-T', '5',
     ],
     { stdio: 'inherit' },
   );

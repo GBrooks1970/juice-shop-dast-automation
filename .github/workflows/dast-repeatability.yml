@@ -1,0 +1,33 @@
+# On-demand evidence lane for backlog item DAST-M3. Each iteration creates and removes both pinned
+# containers through scripts/run-scan.mjs. It remains passive-only and has no configurable target.
+name: DAST repeatability probe
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  repeatability:
+    name: Three fresh passive scans + BDD
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Run three independent fresh-container passive scans
+        run: npm run scan:repeatability
+      - name: Record repeatability evidence
+        shell: bash
+        run: |
+          echo '### DAST-M3 repeatability evidence' >> "$GITHUB_STEP_SUMMARY"
+          echo '```json' >> "$GITHUB_STEP_SUMMARY"
+          cat repeatability-reports/summary.json >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+      - name: BDD exploit confirmations
+        run: npm run bdd
