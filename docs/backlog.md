@@ -10,13 +10,13 @@
 
 # juice-shop-dast-automation — Backlog
 
-**Version:** 10 — **DAST repeatability work plus newly observed dependency risk** (2026-09-08).
-All delivery phases DAST-P0…P5 and review items JSA-R01…R04 remain complete and live. Validation of
-the proposed resting transition exposed a nondeterministic PR-blocking DAST gate: the same PR merge
-ref failed its first scan and passed an unchanged rerun because crawl coverage differed. The project
-therefore remains active with DAST-M3 in progress. A fresh `npm ci` also exposed the HIGH-severity
-`nanoid` advisory through the dev-only Vitest/Vite/PostCSS chain; DAST-M4 records its bounded
-remediation separately. The project has **2 outstanding MEDIUM items**. R1/R2 remain standing
+**Version:** 11 — **DAST-M3 closed; dependency remediation remains** (2026-09-08).
+All delivery phases DAST-P0…P5 and review items JSA-R01…R04 remain complete and live. DAST-M3 is
+closed: browser-backed passive discovery passed required PR checks without rerun and three further
+independent fresh-container scans produced the same seven-class gating set. A fresh `npm ci` exposed
+the HIGH-severity `nanoid` advisory through the dev-only Vitest/Vite/PostCSS chain; DAST-M4 records
+its bounded remediation separately and prevents a resting transition. The project has **1 outstanding
+MEDIUM item**. R1/R2 remain standing
 mitigations, while DAST-M1/M2 remain dormant conditional triggers. Previous v7 completed the Gemini
 v1 remediation by consolidating container utilities, enabling configurable port allocation,
 introducing strongly typed Screenplay memory keys, and pruning unused findings-model interfaces.
@@ -99,7 +99,7 @@ Phase 0 produced two **implementation-precision amendments** (design note §2.1)
 - [x] `onboard-project` registry row: registered in `portfolio-prompts/registry.yml` with
       `presentation_role: showcase`, `orchestration_target: true`, and the Docker-free
       `npm run verify` recorded as the orchestration-safe gate. The lifecycle remains `active` while
-      DAST-M3 is open; transition to `resting` only after the canonical open count returns to zero.
+      DAST-M4 is open; transition to `resting` only after the canonical open count returns to zero.
 - [x] Landing-page evidence link: the live landing data
       (<https://gbrooks1970.github.io/portfolio/data/presentation.json>) carries the
       `OWASP Juice Shop DAST` entry with a `DAST scan report` action pointing at
@@ -114,27 +114,32 @@ Phase 0 produced two **implementation-precision amendments** (design note §2.1)
 ## Current lifecycle and risk summary
 
 **Lifecycle status:** Active — delivered and published, but not eligible for `resting` while
-DAST-M3 or DAST-M4 remains open.
+DAST-M4 remains open.
 
 | Priority | Open count | Current state |
 |---|---:|---|
 | HIGH | 0 | No open items |
-| MEDIUM | 2 | DAST-M3, DAST-M4 |
+| MEDIUM | 1 | DAST-M4 |
 | LOW | 0 | No open items |
-| **Total outstanding** | **2** | DAST-M3 and DAST-M4 open; R1/R2 mitigated; DAST-M1/M2 dormant |
+| **Total outstanding** | **1** | DAST-M4 open; R1/R2 mitigated; DAST-M1/M2 dormant |
 
-## Outstanding items
+## Maintenance items
 
-### DAST-M3 — Stabilise passive-baseline crawl coverage — **MEDIUM — OPEN 2026-09-07**
+### DAST-M3 — Stabilise passive-baseline crawl coverage — **MEDIUM — CLOSED 2026-09-08**
 
-**Update (2026-09-08).** The implementation branch adds ZAP's bounded Ajax spider (`-j`) so the
-Angular application executes and browser-loaded JavaScript is deterministically presented to the
-passive scanner. It also adds an on-demand, fail-closed three-run evidence probe. The item remains
-open until the project PR passes without rerun and the merged workflow records three identical
-fresh-container gating sets plus the 4-scenario / 11-step BDD pass.
+**Resolution.** PR [#7](https://github.com/GBrooks1970/juice-shop-dast-automation/pull/7)
+adds ZAP's bounded Ajax spider (`-j`) so the Angular application executes and browser-loaded
+JavaScript is deterministically presented to the passive scanner. Its required checks passed on the
+first attempt, and exact-merge run
+[`34200533176`](https://github.com/GBrooks1970/juice-shop-dast-automation/actions/runs/34200533176)
+passed on `main`. The on-demand, fail-closed repeatability run
+[`34200784522`](https://github.com/GBrooks1970/juice-shop-dast-automation/actions/runs/34200784522)
+then passed three independent fresh-container scans: each reported 158 URLs, all seven expected
+gating classes, and the same class set. The final BDD confirmation passed 4 scenarios / 11 steps.
+No scan or workflow was rerun. The project remains active because DAST-M4 is open.
 
-**Problem.** The positive-detection contract is fail-closed as designed, but its inputs are not yet
-repeatable. On PR #6, workflow run
+**Original problem.** The positive-detection contract was fail-closed as designed, but its inputs
+were not repeatable. On PR #6, workflow run
 [`34133748394`](https://github.com/GBrooks1970/juice-shop-dast-automation/actions/runs/34133748394)
 used the unchanged pinned Juice Shop 20.1.1 and ZAP 2.17.0 images on both attempts:
 
@@ -154,14 +159,14 @@ changes.
 scope, and the positive-detection/new-class guards. Do not suppress expected classes merely to make
 the gate green. Instead:
 
-- [ ] identify and document the source of variable SPA JavaScript discovery;
-- [ ] make the resources needed by the reviewed class contract deterministic (for example, through
+- [x] identify and document the source of variable SPA JavaScript discovery;
+- [x] make the resources needed by the reviewed class contract deterministic (for example, through
       reviewed fixed seeds or an equivalently bounded passive crawl), without adding a configurable
       external scan target or active scanning;
-- [ ] capture a fresh probe showing the same expected class set across at least three independent
+- [x] capture a fresh probe showing the same expected class set across at least three independent
       fresh-container scans and update the contract provenance/design note with that evidence;
-- [ ] keep `npm run verify` green and prove all 4 BDD scenarios / 11 steps still pass;
-- [ ] obtain green required PR checks without relying on a manual rerun, then reconcile the lifecycle
+- [x] keep `npm run verify` green and prove all 4 BDD scenarios / 11 steps still pass;
+- [x] obtain green required PR checks without relying on a manual rerun, then reconcile the lifecycle
       to `resting` only if no other canonical backlog item is open.
 
 ### DAST-M4 — Remediate the transitive `nanoid` infinite-loop advisory — **Score: 12 (MEDIUM) — OPEN 2026-09-08**

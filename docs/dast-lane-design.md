@@ -78,6 +78,12 @@ unchanged. `npm run scan:repeatability` is the explicit evidence probe: it requi
 fresh-container `npm run dast` passes and rejects any difference in the gating class set; it never
 turns a failed scan into a retry-based pass.
 
+Acceptance evidence was captured on 2026-09-08. PR #7's required scan passed on its first attempt,
+and exact-merge CI run `34200533176` passed on `main`. The separate repeatability run `34200784522`
+then completed three independent fresh-container scans: every scan reported 158 URLs, satisfied all
+seven expected gating classes, and produced the same gating set. The following BDD run passed all
+4 scenarios / 11 steps. No job or scan was rerun.
+
 ## 3. Architecture
 
 ```
@@ -107,7 +113,8 @@ as a standing maintenance trigger in the backlog.
 
 Originally verified across three Phase 0 scans (fresh / same-container / fresh). DAST-M3 retains the
 same reviewed class contract and revalidates it using three independent fresh-container scans with
-browser-backed SPA discovery:
+browser-backed SPA discovery. GitHub Actions run `34200784522` revalidated the table on 2026-09-08:
+all three scans reported 158 URLs and the same seven-class set.
 
 | Plugin | Class | Risk |
 | --- | --- | --- |
