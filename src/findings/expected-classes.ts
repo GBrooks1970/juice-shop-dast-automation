@@ -2,7 +2,10 @@
 //
 // PROVENANCE: verified stable across three ZAP baseline scans (fresh container / same container /
 // fresh container) on 2026-08-06 — identical classes AND identical instance counts every run.
-// Evidence: portfolio-docs/DAST_PHASE0_FEASIBILITY_PROBE_2026-08-06.md
+// Revalidated with browser-backed SPA discovery across three independent fresh-container scans on
+// 2026-09-08 — 158 URLs and the same seven-class gating set in each run.
+// Evidence: portfolio-docs/DAST_PHASE0_FEASIBILITY_PROBE_2026-08-06.md and GitHub Actions run
+// 34200784522.
 //
 // VALID ONLY FOR THE PINNED PAIR BELOW. Bumping either image invalidates this table: re-run the
 // Phase 0 probe and re-review before accepting a bump (backlog trigger DAST-M1).
