@@ -63,13 +63,28 @@ no exploitation story. The division of labour must be stated plainly wherever re
 > the **scan** proves the tooling detects real misconfiguration/disclosure classes;
 > the **BDD scenarios** prove specific documented vulnerabilities are genuinely exploitable.
 
+### 2.2 DAST-M3 amendment — execute the SPA during passive discovery
+
+The 2026-09-07 PR #6 gate failed and then passed for the same merge ref. Both attempts reported 158
+ZAP URLs, but the failed report omitted `main.js` and two JavaScript chunks and therefore missed four
+reviewed gating classes. Digest pins fixed component identity, but the traditional spider only parsed
+responses and did not execute Juice Shop's Angular application, so browser-loaded resources were not
+reliably presented to the passive scanner.
+
+The bounded discovery contract now runs ZAP's Ajax spider (`-j`) after the traditional spider. The
+Ajax spider executes the local SPA in a browser, while `-m 2` bounds each spider and the baseline scan
+still performs passive analysis only. The hard-coded container target and private Docker network are
+unchanged. `npm run scan:repeatability` is the explicit evidence probe: it requires three independent
+fresh-container `npm run dast` passes and rejects any difference in the gating class set; it never
+turns a failed scan into a retry-based pass.
+
 ## 3. Architecture
 
 ```
 docker network (isolated, user-defined bridge)
   ├── juice-shop        bkimminich/juice-shop@sha256:…   (target, port 3000)
   └── zap               ghcr.io/zaproxy/zaproxy@sha256:… (scanner)
-        └── zap-baseline.py -t http://juice-shop:3000 -J report.json -r report.html -m 2 -T 5
+        └── zap-baseline.py -t http://juice-shop:3000 -J report.json -r report.html -j -m 2 -T 5
                  │
                  ├── report.json  → parsed by the TypeScript findings model → PASS/FAIL verdict
                  └── report.html  → labelled + published to Pages (/  or /security/)
@@ -90,7 +105,9 @@ as a standing maintenance trigger in the backlog.
 
 ## 4. The expected-class contract (D2.1a positive detection)
 
-Verified stable across three scans (fresh / same-container / fresh) — classes **and** instance counts:
+Originally verified across three Phase 0 scans (fresh / same-container / fresh). DAST-M3 retains the
+same reviewed class contract and revalidates it using three independent fresh-container scans with
+browser-backed SPA discovery:
 
 | Plugin | Class | Risk |
 | --- | --- | --- |
@@ -173,14 +190,21 @@ reproducible and diffable, and the raw `report.json` is retained as a CI artifac
 
 ## 9. CI shape
 
-Single workflow, PR-blocking (unlike the ParaBank perf lane, this one is deterministic enough to gate):
+The `ci` workflow is PR-blocking. A separate manually dispatched repeatability workflow provides the
+three-run evidence required by DAST-M3 without converting an individual failure into a retry:
 
 1. Boot pinned Juice Shop on a private network; wait for readiness (HTTP 200).
-2. Run pinned ZAP baseline scoped to the container name.
+2. Run the pinned ZAP baseline's traditional and Ajax spiders, scoped to the container name and
+   bounded to two minutes each; pass every response through the passive scanner.
 3. Parse `report.json` → verdict (§4). **Fail the job on a missing or unexpected class.**
 4. Run the BDD confirmation scenarios against the same container.
 5. Publish: upload `report.json` as an artifact; deploy the labelled HTML report to Pages on `main`.
 6. Tear down.
+
+The on-demand `DAST repeatability probe` invokes the same fail-closed `npm run dast` path three times.
+Each iteration recreates both containers, and the job fails immediately if any expected class is
+missing, any unreviewed gating class appears, or the three gating sets differ. It then runs the same
+4-scenario / 11-step BDD confirmation suite once.
 
 Gate cascade per house convention: `npm run verify` = typecheck + unit tests (findings model) + lint;
 the container-dependent scan/BDD steps run in CI and via an explicit local script, not inside `verify`
@@ -200,7 +224,7 @@ raised.
 | Informational-band nondeterminism | Excluded from the verdict (§4), retained in the report |
 | BDD scenarios coupled to specific vulns break on bump | Same pin discipline; scenarios name their vuln explicitly |
 | Published findings misread as a real product's security posture | §1 framing on every surface — the project's top non-technical requirement |
-| Spider scope change silently alters findings | Scope (`-m 2 -T 5`) is part of the contract and recorded here |
+| Traditional spider omits browser-loaded SPA resources | Add the bounded Ajax spider (`-j -m 2`); prove the reviewed class set with three fresh-container scans |
 
 ## 12. Delivery phases
 

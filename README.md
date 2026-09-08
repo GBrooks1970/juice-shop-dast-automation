@@ -15,7 +15,7 @@ vulnerability classes the target is known to contain, and publishing the scan re
 
 ## Status
 
-**Working.** The ZAP passive baseline scan, the positive-detection verdict, and three BDD
+**Working.** The ZAP passive baseline scan, the positive-detection verdict, and four BDD
 exploit-confirmation scenarios all run against the pinned target in CI. See
 [docs/backlog.md](docs/backlog.md) for the phased plan and status.
 
@@ -27,13 +27,15 @@ Requires Docker and Node 24.
 npm ci
 npm run verify        # typecheck + unit tests (Docker-free, fast)
 npm run dast          # boot Juice Shop, run the ZAP baseline, apply the verdict
+npm run scan:repeatability # require 3 identical fresh-container DAST verdicts
 npm run bdd           # boot Juice Shop, run the exploit-confirmation scenarios
 npm run pages:build   # build the labelled report site from the last scan
 ```
 
-Each Docker-backed script boots the pinned container, runs, and tears it down. The pass/fail signal
-is `npm run scan:verdict` (which parses the report), **not** ZAP's exit code — that is always non-zero
-on this deliberately-vulnerable target.
+Each Docker-backed iteration boots the pinned container, runs, and tears it down. The repeatability
+probe is fail-closed evidence, not a retry: any failed iteration fails the probe. The pass/fail
+signal is `npm run scan:verdict` (which parses the report), **not** ZAP's exit code — that is always
+non-zero on this deliberately-vulnerable target.
 
 ## What it will demonstrate
 

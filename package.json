@@ -13,6 +13,7 @@
     "verify": "npm run typecheck && npm run test:unit",
     "scan": "node scripts/run-scan.mjs",
     "scan:verdict": "tsx scripts/check-findings.ts",
+    "scan:repeatability": "node scripts/run-repeatability-probe.mjs",
     "dast": "npm run scan && npm run scan:verdict",
     "bdd": "node scripts/run-bdd.mjs",
     "bdd:dry": "node --import tsx/esm node_modules/@cucumber/cucumber/bin/cucumber.js --dry-run",

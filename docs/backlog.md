@@ -10,11 +10,13 @@
 
 # juice-shop-dast-automation — Backlog
 
-**Version:** 9 — **Lifecycle reconciliation reopened one maintenance item** (2026-09-07).
+**Version:** 10 — **DAST repeatability work plus newly observed dependency risk** (2026-09-08).
 All delivery phases DAST-P0…P5 and review items JSA-R01…R04 remain complete and live. Validation of
 the proposed resting transition exposed a nondeterministic PR-blocking DAST gate: the same PR merge
 ref failed its first scan and passed an unchanged rerun because crawl coverage differed. The project
-therefore remains **active with 1 outstanding MEDIUM item (DAST-M3)**. R1/R2 remain standing
+therefore remains active with DAST-M3 in progress. A fresh `npm ci` also exposed the HIGH-severity
+`nanoid` advisory through the dev-only Vitest/Vite/PostCSS chain; DAST-M4 records its bounded
+remediation separately. The project has **2 outstanding MEDIUM items**. R1/R2 remain standing
 mitigations, while DAST-M1/M2 remain dormant conditional triggers. Previous v7 completed the Gemini
 v1 remediation by consolidating container utilities, enabling configurable port allocation,
 introducing strongly typed Screenplay memory keys, and pruning unused findings-model interfaces.
@@ -111,19 +113,25 @@ Phase 0 produced two **implementation-precision amendments** (design note §2.1)
 
 ## Current lifecycle and risk summary
 
-**Lifecycle status:** Active — delivered and published, but not eligible for `resting` while the
-PR-blocking positive-detection gate can produce different verdicts for the same commit.
+**Lifecycle status:** Active — delivered and published, but not eligible for `resting` while
+DAST-M3 or DAST-M4 remains open.
 
 | Priority | Open count | Current state |
 |---|---:|---|
 | HIGH | 0 | No open items |
-| MEDIUM | 1 | DAST-M3 |
+| MEDIUM | 2 | DAST-M3, DAST-M4 |
 | LOW | 0 | No open items |
-| **Total outstanding** | **1** | DAST-M3 open; R1/R2 mitigated; DAST-M1/M2 dormant |
+| **Total outstanding** | **2** | DAST-M3 and DAST-M4 open; R1/R2 mitigated; DAST-M1/M2 dormant |
 
 ## Outstanding items
 
 ### DAST-M3 — Stabilise passive-baseline crawl coverage — **MEDIUM — OPEN 2026-09-07**
+
+**Update (2026-09-08).** The implementation branch adds ZAP's bounded Ajax spider (`-j`) so the
+Angular application executes and browser-loaded JavaScript is deterministically presented to the
+passive scanner. It also adds an on-demand, fail-closed three-run evidence probe. The item remains
+open until the project PR passes without rerun and the merged workflow records three identical
+fresh-container gating sets plus the 4-scenario / 11-step BDD pass.
 
 **Problem.** The positive-detection contract is fail-closed as designed, but its inputs are not yet
 repeatable. On PR #6, workflow run
@@ -155,6 +163,20 @@ the gate green. Instead:
 - [ ] keep `npm run verify` green and prove all 4 BDD scenarios / 11 steps still pass;
 - [ ] obtain green required PR checks without relying on a manual rerun, then reconcile the lifecycle
       to `resting` only if no other canonical backlog item is open.
+
+### DAST-M4 — Remediate the transitive `nanoid` infinite-loop advisory — **Score: 12 (MEDIUM) — OPEN 2026-09-08**
+
+**Priority score:** Security Impact (4) + Breakage Probability (3) + Maintenance Burden (5) =
+**12 points**. `npm audit` reports GHSA-2v37-7h3g-55p8 as HIGH severity for `nanoid <3.3.18`.
+The locked `nanoid@3.3.17` is dev-only and reached through
+`vitest → vite → postcss → nanoid`, which limits exposure to repository-controlled test/build input,
+but a patched compatible release is available and the project should not retain a known advisory.
+
+**Acceptance criteria:**
+
+- [ ] constrain the transitive dependency to `nanoid >=3.3.18` without broad dependency churn;
+- [ ] regenerate the lockfile and prove `npm audit` reports zero vulnerabilities;
+- [ ] keep `npm run verify` green and record the remediation evidence before lifecycle closure.
 
 ## Standing maintenance triggers
 
