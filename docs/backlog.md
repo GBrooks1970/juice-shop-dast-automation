@@ -10,13 +10,13 @@
 
 # juice-shop-dast-automation — Backlog
 
-**Version:** 11 — **DAST-M3 closed; dependency remediation remains** (2026-09-08).
-All delivery phases DAST-P0…P5 and review items JSA-R01…R04 remain complete and live. DAST-M3 is
-closed: browser-backed passive discovery passed required PR checks without rerun and three further
-independent fresh-container scans produced the same seven-class gating set. A fresh `npm ci` exposed
-the HIGH-severity `nanoid` advisory through the dev-only Vitest/Vite/PostCSS chain; DAST-M4 records
-its bounded remediation separately and prevents a resting transition. The project has **1 outstanding
-MEDIUM item**. R1/R2 remain standing
+**Version:** 12 — **DAST-M4 closed; all delivery phases and maintenance complete; resting** (2026-09-10).
+All delivery phases DAST-P0…P5, review items JSA-R01…R04, and maintenance items DAST-M3 and DAST-M4
+remain complete and live. DAST-M4 is closed: dev-only transitive `nanoid` was constrained to `>=3.3.18`
+via package overrides (resolving `nanoid@3.3.19`) and `vitest` was updated to `^4.1.11` (resolving
+`@vitest/mocker@4.1.11`), achieving zero vulnerabilities on `npm audit`. `npm run verify` (typecheck +
+21 unit tests) and `npm run bdd:dry` passed 100% green without runtime or architectural churn. The
+project has **0 outstanding items** and transitions to **Resting**. R1/R2 remain standing
 mitigations, while DAST-M1/M2 remain dormant conditional triggers. Previous v7 completed the Gemini
 v1 remediation by consolidating container utilities, enabling configurable port allocation,
 introducing strongly typed Screenplay memory keys, and pruning unused findings-model interfaces.
@@ -113,15 +113,14 @@ Phase 0 produced two **implementation-precision amendments** (design note §2.1)
 
 ## Current lifecycle and risk summary
 
-**Lifecycle status:** Active — delivered and published, but not eligible for `resting` while
-DAST-M4 remains open.
+**Lifecycle status:** Resting — delivered, published, and zero open backlog items remain.
 
 | Priority | Open count | Current state |
 |---|---:|---|
 | HIGH | 0 | No open items |
-| MEDIUM | 1 | DAST-M4 |
+| MEDIUM | 0 | No open items (DAST-M4 closed 2026-09-10) |
 | LOW | 0 | No open items |
-| **Total outstanding** | **1** | DAST-M4 open; R1/R2 mitigated; DAST-M1/M2 dormant |
+| **Total outstanding** | **0** | All items resolved; R1/R2 mitigated; DAST-M1/M2 dormant |
 
 ## Maintenance items
 
@@ -169,19 +168,26 @@ the gate green. Instead:
 - [x] obtain green required PR checks without relying on a manual rerun, then reconcile the lifecycle
       to `resting` only if no other canonical backlog item is open.
 
-### DAST-M4 — Remediate the transitive `nanoid` infinite-loop advisory — **Score: 12 (MEDIUM) — OPEN 2026-09-08**
+### DAST-M4 — Remediate the transitive `nanoid` infinite-loop advisory — **MEDIUM — CLOSED 2026-09-10**
 
-**Priority score:** Security Impact (4) + Breakage Probability (3) + Maintenance Burden (5) =
-**12 points**. `npm audit` reports GHSA-2v37-7h3g-55p8 as HIGH severity for `nanoid <3.3.18`.
-The locked `nanoid@3.3.17` is dev-only and reached through
-`vitest → vite → postcss → nanoid`, which limits exposure to repository-controlled test/build input,
-but a patched compatible release is available and the project should not retain a known advisory.
+**Resolution.** Constrained the dev-only transitive `nanoid` dependency to `^3.3.18` via npm `overrides`
+in `package.json` (resolving `nanoid@3.3.19` under `vite@8.3.0` → `postcss@8.5.28`) and updated `vitest`
+to `^4.1.11` (resolving `@vitest/mocker@4.1.11`, remediating GHSA-82fw-gwwq-j7x9). `npm audit` reports
+0 vulnerabilities (`found 0 vulnerabilities`). Local verification (`npm run verify`, running typecheck
+and 21 unit tests) passed cleanly in 1.15s, and Cucumber step bindings verified via `npm run bdd:dry`
+(4 scenarios / 11 steps). With all backlog items complete, the project transitions to `resting`.
+
+**Original problem.** Priority score: Security Impact (4) + Breakage Probability (3) + Maintenance
+Burden (5) = **12 points**. `npm audit` reported GHSA-2v37-7h3g-55p8 as HIGH severity for `nanoid <3.3.18`.
+The locked `nanoid@3.3.17` was dev-only and reached through `vitest → vite → postcss → nanoid`, which
+limited exposure to repository-controlled test/build input, but a patched compatible release was
+available and the project did not retain the advisory.
 
 **Acceptance criteria:**
 
-- [ ] constrain the transitive dependency to `nanoid >=3.3.18` without broad dependency churn;
-- [ ] regenerate the lockfile and prove `npm audit` reports zero vulnerabilities;
-- [ ] keep `npm run verify` green and record the remediation evidence before lifecycle closure.
+- [x] constrain the transitive dependency to `nanoid >=3.3.18` without broad dependency churn;
+- [x] regenerate the lockfile and prove `npm audit` reports zero vulnerabilities;
+- [x] keep `npm run verify` green and record the remediation evidence before lifecycle closure.
 
 ## Standing maintenance triggers
 
