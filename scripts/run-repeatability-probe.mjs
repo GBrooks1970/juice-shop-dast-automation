@@ -1,18 +1,18 @@
 // Runs the fail-closed DAST contract three times from fresh containers and records whether the
 // reviewed gating class set is identical. This is an explicit evidence probe, not a retry: any
 // failed iteration stops the probe and remains a failure.
-import { spawnSync } from 'node:child_process';
 import { cpSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import process from 'node:process';
+
+import { runNpm } from './run-npm.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const REPORTS = resolve(ROOT, 'reports');
 const EVIDENCE = resolve(ROOT, 'repeatability-reports');
 const RUNS = 3;
 const GATING_BANDS = new Set(['Low', 'Medium', 'High', 'Critical']);
-const npm = process.platform === 'win32' ? 'npm.cmd' : 'npm';
 
 function gatingClasses(report) {
   const classes = new Set();
@@ -33,11 +33,8 @@ mkdirSync(EVIDENCE, { recursive: true });
 const evidence = [];
 for (let run = 1; run <= RUNS; run += 1) {
   console.log(`dast: repeatability probe ${run}/${RUNS} — fresh Juice Shop and ZAP containers`);
-  const result = spawnSync(npm, ['run', 'dast'], {
-    cwd: ROOT,
-    env: process.env,
-    stdio: 'inherit',
-  });
+  // Via run-npm.mjs: spawning `npm.cmd` directly fails on Windows with EINVAL (backlog DAST-M5).
+  const result = runNpm(['run', 'dast'], { cwd: ROOT, stdio: 'inherit' });
   if (result.error) {
     console.error(`dast: repeatability probe ${run}/${RUNS} could not start: ${result.error.message}`);
     process.exit(1);
