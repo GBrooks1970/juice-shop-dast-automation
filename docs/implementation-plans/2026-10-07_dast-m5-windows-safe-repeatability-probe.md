@@ -4,9 +4,9 @@ created: 2026-10-07T09:25Z
 project: juice-shop-dast-automation
 type: implementation-plan
 item: DAST-M5
-status: approved
+status: implemented
 approved: 2026-10-07, Gary Brooks ("Approved, go with recommendations", every recommended option below); the owner merges
-delivered: not yet
+delivered: PR #12, squash commit ba76110, merged 2026-10-07T09:46:26Z by the owner
 language: en-GB
 ---
 
@@ -78,3 +78,15 @@ contract, container pins or scan behaviour.
 | Lifecycle | Leave the registry and landing page as "resting, Closed 2026-09-10"; or refresh the label date | Leave them: the item opens and closes in one cycle, and the landing page's parity guards make extra edits costly | Leave them, approved 2026-10-07 |
 | Verification | Local Windows scans plus a CI dispatch on the branch; or local only | Both: the dispatch is the only proof that Linux is unchanged | Both, approved 2026-10-07 |
 | Delegation | Do it directly; or a subagent as for PB-PIN-06 | Directly: the code and tests are small, and the long scan runs in the background with a memory check | Directly, approved 2026-10-07 |
+
+## Outcome
+
+Delivered as planned. PR [#12](https://github.com/GBrooks1970/juice-shop-dast-automation/pull/12) (four commits: `52bef46` the plan, `1d4fead` the
+backlog item, `3d7c84d` the fix, `bc8021e` the evidence) was merged by the owner as `ba76110` on 2026-10-07 at 09:46:26Z. The log is
+[`docs/implementation-logs/2026-10-07_dast-m5-windows-safe-repeatability-probe.md`](../implementation-logs/2026-10-07_dast-m5-windows-safe-repeatability-probe.md).
+
+- **Design:** `scripts/run-npm.mjs` starts npm through `process.execPath` and `npm_execpath` when set (no shell), else a shell on Windows with constant arguments, else plain `npm`. Only the probe uses it. Option A, as recommended.
+- **Verification, as planned:** `npm run verify` typecheck clean with 27 tests (21 before; 6 new). Against the old behaviour 5 of the 6 new tests failed, including the real spawn with `spawnSync npm.cmd EINVAL`. `npm run scan:repeatability` on Windows passed on the branch (exit 0 in 425 s) and again on merged `main` at `ba76110` (exit 0 in 496 s); each time three scans reported the same seven gating classes. The dispatched `DAST repeatability probe` on the branch (run `37602040336`, `3d7c84d`) passed on Linux in 4 min 23 s with BDD 4 scenarios / 11 steps. PR `ci` run `37602632927` and post-merge `ci` run `37602921298` both succeeded.
+- **Differences from the plan:** none in design or scope. The verification step 'a copy of the old approach' was done by temporarily swapping the old behaviour into the helper and running the new tests, then restoring it. The post-merge Windows run on `main` was an addition to the plan, so the paths record reflects the merged project.
+- **Also done:** a stale 0-byte `.git/index.lock` from 2026-09-30 was removed before work started (no git process was running).
+- **Out of scope, unchanged:** the registry, the landing page, the DAST contract, the container pins and loan-origination's `build-reports.mjs`.

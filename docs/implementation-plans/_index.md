@@ -12,4 +12,4 @@ Every implementation plan is written to a file here before implementation starts
 
 | Plan | Item | Presented | Status | Delivered |
 |---|---|---|---|---|
-| [`2026-10-07_dast-m5-windows-safe-repeatability-probe.md`](2026-10-07_dast-m5-windows-safe-repeatability-probe.md) | DAST-M5 Make the repeatability probe run on Windows | 2026-10-07 | approved | not yet |
+| [`2026-10-07_dast-m5-windows-safe-repeatability-probe.md`](2026-10-07_dast-m5-windows-safe-repeatability-probe.md) | DAST-M5 Make the repeatability probe run on Windows | 2026-10-07 | implemented | [#12](https://github.com/GBrooks1970/juice-shop-dast-automation/pull/12) (`ba76110`, 2026-10-07) |
