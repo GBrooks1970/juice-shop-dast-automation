@@ -203,9 +203,9 @@ Windows with constant arguments, plain `npm` elsewhere). Only the probe changes.
 
 **Acceptance criteria:**
 
-- [ ] `npm run verify` passes with new unit tests for the spawn helper, including one that fails against the old approach;
-- [ ] `npm run scan:repeatability` on Windows passes, or fails with a recorded, separate cause;
-- [ ] the `DAST repeatability probe` workflow, dispatched on the branch, passes on Linux;
+- [x] `npm run verify` passes with new unit tests for the spawn helper, including one that fails against the old approach — typecheck clean, 27 tests in 3 files (21 before; 6 new). With the old behaviour swapped in (`npm.cmd`, no shell), 5 of the 6 new tests failed, including the real spawn with `spawnSync npm.cmd EINVAL`; the helper was restored and all 6 pass (2026-10-07);
+- [x] `npm run scan:repeatability` on Windows passes, or fails with a recorded, separate cause — passed on 2026-10-07 (Windows, Node 24.18.0, Docker on `E:`): exit 0 in 425 s; three fresh-container scans each reported 7 gating classes and the same class set (`repeatability-reports/summary.json` `result: PASS`);
+- [x] the `DAST repeatability probe` workflow, dispatched on the branch, passes on Linux — run [`37602040336`](https://github.com/GBrooks1970/juice-shop-dast-automation/actions/runs/37602040336) on `3d7c84d`: success in 4 min 23 s; three scans, 7 gating classes each, same set; BDD exploit confirmations 4 scenarios / 11 steps passed;
 - [ ] the item is closed (log, plan Outcome, lifecycle back to Resting) in a follow-up PR after the merge.
 
 ## Standing maintenance triggers
