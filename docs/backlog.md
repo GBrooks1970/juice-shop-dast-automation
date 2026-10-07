@@ -10,7 +10,7 @@
 
 # juice-shop-dast-automation — Backlog
 
-**Version:** 12 — **DAST-M4 closed; all delivery phases and maintenance complete; resting** (2026-09-10).
+**Version:** 13 — **DAST-M5 opened** (2026-10-07): the repeatability probe cannot start on Windows. CI is unaffected. Previous v12: **DAST-M4 closed; all delivery phases and maintenance complete; resting** (2026-09-10).
 All delivery phases DAST-P0…P5, review items JSA-R01…R04, and maintenance items DAST-M3 and DAST-M4
 remain complete and live. DAST-M4 is closed: dev-only transitive `nanoid` was constrained to `>=3.3.18`
 via package overrides (resolving `nanoid@3.3.19`) and `vitest` was updated to `^4.1.11` (resolving
@@ -113,14 +113,14 @@ Phase 0 produced two **implementation-precision amendments** (design note §2.1)
 
 ## Current lifecycle and risk summary
 
-**Lifecycle status:** Resting — delivered, published, and zero open backlog items remain.
+**Lifecycle status:** Active — one LOW maintenance item (DAST-M5) is open; the project returns to Resting when it closes.
 
 | Priority | Open count | Current state |
 |---|---:|---|
 | HIGH | 0 | No open items |
 | MEDIUM | 0 | No open items (DAST-M4 closed 2026-09-10) |
-| LOW | 0 | No open items |
-| **Total outstanding** | **0** | All items resolved; R1/R2 mitigated; DAST-M1/M2 dormant |
+| LOW | 1 | DAST-M5 open (Windows-only; CI unaffected) |
+| **Total outstanding** | **1** | DAST-M5; R1/R2 mitigated; DAST-M1/M2 dormant |
 
 ## Maintenance items
 
@@ -188,6 +188,25 @@ available and the project did not retain the advisory.
 - [x] constrain the transitive dependency to `nanoid >=3.3.18` without broad dependency churn;
 - [x] regenerate the lockfile and prove `npm audit` reports zero vulnerabilities;
 - [x] keep `npm run verify` green and record the remediation evidence before lifecycle closure.
+
+### DAST-M5 — Make the repeatability probe run on Windows — **LOW — OPEN (opened 2026-10-07)**
+
+**Problem.** On Windows with Node 24.18.0, `npm run scan:repeatability` exits 1 in 6 s, before any container starts:
+`dast: repeatability probe 1/3 could not start: spawnSync npm.cmd EINVAL`. `scripts/run-repeatability-probe.mjs`
+spawned `npm.cmd` without a shell, which current Node refuses on Windows. The `DAST repeatability probe` workflow runs on
+`ubuntu-latest` and is unaffected, so the defect only blocks local Windows runs. Found by running Learning Paths stage 4.4
+(portfolio walkthrough `2026-10-06_learning-paths-docker-stages.md`).
+
+**Plan.** [`docs/implementation-plans/2026-10-07_dast-m5-windows-safe-repeatability-probe.md`](implementation-plans/2026-10-07_dast-m5-windows-safe-repeatability-probe.md).
+Spawn npm through `process.execPath` and `process.env.npm_execpath` (no shell), with a fallback when it is unset (shell on
+Windows with constant arguments, plain `npm` elsewhere). Only the probe changes.
+
+**Acceptance criteria:**
+
+- [ ] `npm run verify` passes with new unit tests for the spawn helper, including one that fails against the old approach;
+- [ ] `npm run scan:repeatability` on Windows passes, or fails with a recorded, separate cause;
+- [ ] the `DAST repeatability probe` workflow, dispatched on the branch, passes on Linux;
+- [ ] the item is closed (log, plan Outcome, lifecycle back to Resting) in a follow-up PR after the merge.
 
 ## Standing maintenance triggers
 
